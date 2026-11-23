@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import AdSlot from '@/components/AdSlot'
 
 const categories = [
   { name: 'Artificial Intelligence', slug: 'artificial-intelligence' },
@@ -39,6 +40,12 @@ export default function Sidebar() {
             </li>
           ))}
         </ul>
+      </div>
+
+      {/* Sidebar Ad (300x250 Adsterra) */}
+      <div className="bg-card border border-border rounded-xl p-4">
+        <span className="text-[10px] uppercase font-semibold text-secondary tracking-wider block mb-2 text-center">Advertisement</span>
+        <AdSlot format="300x250" />
       </div>
 
       {/* Newsletter */}
