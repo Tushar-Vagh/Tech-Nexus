@@ -73,14 +73,27 @@ export default function AdSlot({
     container.innerHTML = '' // clear previous ad
 
     if (format === 'native') {
-      // Native Banner script
+      // Native Banner script - extract hash if full URL or extract id directly
+      let scriptSrc = activeKey
+      let containerHash = activeKey
+
+      if (activeKey.startsWith('http://') || activeKey.startsWith('https://')) {
+        scriptSrc = activeKey
+        // Extract hash from end of URL (e.g. https://bicea.org/21/e888ecce86a9f815f6b4a6a51e8b8c3b)
+        const parts = activeKey.split('/')
+        containerHash = parts[parts.length - 1]
+      } else {
+        scriptSrc = `//www.topcreativeformat.com/${activeKey}/invoke.js`
+      }
+
+      const nativeDiv = document.createElement('div')
+      nativeDiv.id = `container-${containerHash}`
+      container.appendChild(nativeDiv)
+
       const nativeScript = document.createElement('script')
       nativeScript.async = true
       nativeScript.dataset.cfasync = 'false'
-      nativeScript.src = `//www.topcreativeformat.com/${activeKey}/invoke.js`
-      const nativeDiv = document.createElement('div')
-      nativeDiv.id = `container-${activeKey}`
-      container.appendChild(nativeDiv)
+      nativeScript.src = scriptSrc
       container.appendChild(nativeScript)
       return
     }
@@ -115,7 +128,7 @@ export default function AdSlot({
     <div
       ref={containerRef}
       className={`overflow-hidden flex justify-center items-center my-4 ${className}`}
-      style={{ minHeight: `${height}px` }}
+      style={{ minHeight: format === 'native' ? '120px' : `${height}px` }}
     />
   )
 }
