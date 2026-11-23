@@ -13,6 +13,8 @@ const categories = [
 ]
 
 export default function Sidebar() {
+  const hasSidebarKey = Boolean(process.env.NEXT_PUBLIC_ADSTERRA_300x250_KEY)
+
   return (
     <aside className="space-y-6">
       {/* Search */}
@@ -28,11 +30,13 @@ export default function Sidebar() {
         </form>
       </div>
 
-      {/* 1. Sidebar Top Ad (300x250) */}
-      <div className="bg-card border border-border rounded-xl p-3">
-        <span className="text-[10px] uppercase font-semibold text-secondary tracking-wider block mb-1 text-center">Advertisement</span>
-        <AdSlot format="300x250" slot="sidebar-top" />
-      </div>
+      {/* 1. Sidebar Top Ad (renders only if key is active) */}
+      {hasSidebarKey && (
+        <div className="bg-card border border-border rounded-xl p-3">
+          <span className="text-[10px] uppercase font-semibold text-secondary tracking-wider block mb-1 text-center">Advertisement</span>
+          <AdSlot format="300x250" slot="sidebar-top" />
+        </div>
+      )}
 
       {/* Categories */}
       <div className="bg-card border border-border rounded-xl p-5">
@@ -48,11 +52,13 @@ export default function Sidebar() {
         </ul>
       </div>
 
-      {/* 2. Sidebar Bottom Ad (300x250) */}
-      <div className="bg-card border border-border rounded-xl p-3">
-        <span className="text-[10px] uppercase font-semibold text-secondary tracking-wider block mb-1 text-center">Sponsored</span>
-        <AdSlot format="300x250" slot="sidebar-bottom" />
-      </div>
+      {/* 2. Sidebar Bottom Ad (renders only if key is active) */}
+      {hasSidebarKey && (
+        <div className="bg-card border border-border rounded-xl p-3">
+          <span className="text-[10px] uppercase font-semibold text-secondary tracking-wider block mb-1 text-center">Sponsored</span>
+          <AdSlot format="300x250" slot="sidebar-bottom" />
+        </div>
+      )}
 
       {/* Newsletter */}
       <div className="bg-gradient-to-br from-primary to-primary-dark text-white rounded-xl p-6">

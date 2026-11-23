@@ -65,22 +65,9 @@ export default function AdSlot({
     container.appendChild(invokeScript)
   }, [activeKey, height, width])
 
-  // Placeholder when no Adsterra Key is set
+  // If no Ad key is configured, return null (render nothing, taking 0 space)
   if (!activeKey) {
-    return (
-      <div
-        className={`bg-muted/60 border border-dashed border-border rounded-xl flex flex-col items-center justify-center text-center p-4 text-xs text-secondary transition-colors ${className}`}
-        style={{ minHeight: `${height}px` }}
-      >
-        <div className="flex items-center space-x-1.5 font-medium text-foreground/80 mb-1">
-          <span>📢</span>
-          <span>Adsterra Ad Space ({width}×{height})</span>
-        </div>
-        <p className="max-w-xs opacity-75">
-          Add <code className="bg-background px-1.5 py-0.5 rounded border border-border">NEXT_PUBLIC_ADSTERRA_{width === 300 ? '300x250' : '728x90'}_KEY</code> in your environment variables to show live ads.
-        </p>
-      </div>
-    )
+    return null
   }
 
   return (
