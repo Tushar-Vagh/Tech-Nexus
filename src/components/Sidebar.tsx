@@ -14,7 +14,7 @@ const categories = [
 
 export default function Sidebar() {
   return (
-    <aside className="space-y-8">
+    <aside className="space-y-6">
       {/* Search */}
       <div className="bg-card border border-border rounded-xl p-5">
         <h3 className="font-semibold text-foreground mb-3">Search</h3>
@@ -26,6 +26,12 @@ export default function Sidebar() {
             className="w-full px-4 py-2 bg-muted border border-border rounded-lg text-foreground placeholder-secondary focus:outline-none focus:ring-2 focus:ring-primary"
           />
         </form>
+      </div>
+
+      {/* 1. Sidebar Top Ad (300x250) */}
+      <div className="bg-card border border-border rounded-xl p-3">
+        <span className="text-[10px] uppercase font-semibold text-secondary tracking-wider block mb-1 text-center">Advertisement</span>
+        <AdSlot format="300x250" slot="sidebar-top" />
       </div>
 
       {/* Categories */}
@@ -42,10 +48,10 @@ export default function Sidebar() {
         </ul>
       </div>
 
-      {/* Sidebar Ad (300x250 Adsterra) */}
-      <div className="bg-card border border-border rounded-xl p-4">
-        <span className="text-[10px] uppercase font-semibold text-secondary tracking-wider block mb-2 text-center">Advertisement</span>
-        <AdSlot format="300x250" />
+      {/* 2. Sidebar Bottom Ad (300x250) */}
+      <div className="bg-card border border-border rounded-xl p-3">
+        <span className="text-[10px] uppercase font-semibold text-secondary tracking-wider block mb-1 text-center">Sponsored</span>
+        <AdSlot format="300x250" slot="sidebar-bottom" />
       </div>
 
       {/* Newsletter */}

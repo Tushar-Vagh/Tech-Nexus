@@ -37,15 +37,30 @@ export default async function PostPage({ params }: Props) {
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
 
+  // Split HTML content at second closing tag to insert an authentic in-article mid ad
+  const content = post.content || ''
+  let firstHalf = content
+  let secondHalf = ''
+  const splitIndex = content.indexOf('</p>', Math.floor(content.length / 2))
+  if (splitIndex !== -1) {
+    firstHalf = content.substring(0, splitIndex + 4)
+    secondHalf = content.substring(splitIndex + 4)
+  }
+
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Realtime visitor tracker */}
       <ViewTracker slug={post.slug} />
 
+      {/* 1. Header Banner Ad (Above Article) */}
+      <div className="mb-6">
+        <AdSlot format="728x90" slot="article-header" />
+      </div>
+
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <article className="lg:col-span-2">
-          {/* Header */}
-          <div className="mb-8">
+          {/* Header Info */}
+          <div className="mb-6">
             <div className="flex items-center space-x-3 mb-4 flex-wrap gap-y-2">
               <span className="bg-primary/10 text-primary text-sm font-semibold px-3 py-1 rounded-full">
                 {post.category?.name || 'Tech'}
@@ -74,23 +89,46 @@ export default async function PostPage({ params }: Props) {
 
           {/* Cover Image */}
           {post.coverImage && (
-            <img src={post.coverImage} alt={post.title} className="w-full rounded-xl mb-8 max-h-96 object-cover" />
+            <img src={post.coverImage} alt={post.title} className="w-full rounded-xl mb-6 max-h-96 object-cover" />
           )}
 
-          {/* Ad */}
-          <AdSlot slot="article-top" format="horizontal" className="mb-8" />
+          {/* 2. Top-Of-Content Ad */}
+          <div className="my-6">
+            <AdSlot format="728x90" slot="article-before-content" />
+          </div>
 
-          {/* Content */}
-          <div className="prose max-w-none" dangerouslySetInnerHTML={{ __html: post.content }} />
+          {/* Content First Half */}
+          <div className="prose max-w-none" dangerouslySetInnerHTML={{ __html: firstHalf }} />
 
-          {/* Bottom Ad */}
-          <AdSlot slot="article-bottom" format="horizontal" className="mt-8" />
+          {/* 3. Mid-Article In-Content Ad */}
+          <div className="my-8 py-3 border-y border-border/40">
+            <span className="text-[10px] uppercase font-semibold text-secondary tracking-wider block mb-2 text-center">Sponsored</span>
+            <AdSlot format="300x250" slot="article-middle" />
+          </div>
 
-          {/* Share again */}
-          <div className="border-t border-border mt-8 pt-6">
+          {/* Content Second Half */}
+          {secondHalf && (
+            <div className="prose max-w-none" dangerouslySetInnerHTML={{ __html: secondHalf }} />
+          )}
+
+          {/* 4. Bottom-Of-Article Ad */}
+          <div className="my-8">
+            <AdSlot format="728x90" slot="article-end" />
+          </div>
+
+          {/* Share Section */}
+          <div className="border-t border-border mt-8 pt-6 flex items-center justify-between">
+            <span className="font-semibold text-foreground text-sm">Did you find this article helpful?</span>
             <ShareButtons url={`${siteUrl}/blog/${post.slug}`} title={post.title} />
           </div>
+
+          {/* 5. Post Comments/After-Article Ad */}
+          <div className="mt-8">
+            <AdSlot format="728x90" slot="article-after-share" />
+          </div>
         </article>
+
+        {/* Sidebar includes 2 additional Ad slots (Top 300x250 + Bottom 300x250) */}
         <Sidebar />
       </div>
     </div>

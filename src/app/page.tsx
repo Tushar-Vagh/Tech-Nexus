@@ -16,7 +16,7 @@ export default async function Home() {
       take: 7,
     })
   } catch (e) {
-    // DB not seeded yet
+    // DB error fallback
   }
 
   const featured = posts.find(p => p.featured) || posts[0]
@@ -24,8 +24,13 @@ export default async function Home() {
 
   return (
     <div>
-      {/* Hero */}
-      <section className="bg-gradient-to-br from-primary/10 via-background to-accent/10 py-16 md:py-24">
+      {/* 1. Header Top Ad Banner */}
+      <div className="max-w-7xl mx-auto px-4 mt-4">
+        <AdSlot format="728x90" slot="home-top" />
+      </div>
+
+      {/* Hero Section */}
+      <section className="bg-gradient-to-br from-primary/10 via-background to-accent/10 py-14 md:py-20 my-4">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-4xl md:text-6xl font-extrabold text-foreground mb-6">
             Welcome to <span className="text-primary">Tech</span>Nexus
@@ -44,14 +49,14 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* Ad Banner */}
+      {/* 2. Below Hero Mid-Page Ad */}
       <div className="max-w-7xl mx-auto px-4 my-6">
-        <AdSlot slot="header-banner" format="horizontal" />
+        <AdSlot format="728x90" slot="home-after-hero" />
       </div>
 
       {/* Featured Post */}
       {featured && (
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-12">
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-10">
           <h2 className="text-2xl font-bold text-foreground mb-6">⭐ Featured</h2>
           <BlogCard
             title={featured.title}
@@ -67,8 +72,16 @@ export default async function Home() {
         </section>
       )}
 
+      {/* 3. In-Feed Dual Banner Ad Section */}
+      <div className="max-w-7xl mx-auto px-4 my-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <AdSlot format="300x250" slot="home-feed-left" />
+          <AdSlot format="300x250" slot="home-feed-right" />
+        </div>
+      </div>
+
       {/* Latest Posts */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-12">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-bold text-foreground">📰 Latest Articles</h2>
           <Link href="/blog" className="text-primary hover:underline font-medium">View All →</Link>
@@ -97,9 +110,14 @@ export default async function Home() {
         )}
       </section>
 
-      {/* Bottom Ad */}
-      <div className="max-w-7xl mx-auto px-4 mb-8">
-        <AdSlot slot="homepage-bottom" format="horizontal" />
+      {/* 4. Pre-Footer Banner Ad */}
+      <div className="max-w-7xl mx-auto px-4 my-8">
+        <AdSlot format="728x90" slot="home-pre-footer" />
+      </div>
+
+      {/* 5. Bottom Sticky/Footer Ad */}
+      <div className="max-w-7xl mx-auto px-4 mb-10">
+        <AdSlot format="728x90" slot="home-bottom" />
       </div>
     </div>
   )
