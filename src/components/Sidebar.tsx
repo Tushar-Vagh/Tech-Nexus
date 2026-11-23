@@ -33,7 +33,6 @@ export default function Sidebar() {
       {/* 1. Sidebar Top Ad (renders only if key is active) */}
       {hasSidebarKey && (
         <div className="bg-card border border-border rounded-xl p-3">
-          <span className="text-[10px] uppercase font-semibold text-secondary tracking-wider block mb-1 text-center">Advertisement</span>
           <AdSlot format="300x250" slot="sidebar-top" />
         </div>
       )}
@@ -55,7 +54,6 @@ export default function Sidebar() {
       {/* 2. Sidebar Bottom Ad (renders only if key is active) */}
       {hasSidebarKey && (
         <div className="bg-card border border-border rounded-xl p-3">
-          <span className="text-[10px] uppercase font-semibold text-secondary tracking-wider block mb-1 text-center">Sponsored</span>
           <AdSlot format="300x250" slot="sidebar-bottom" />
         </div>
       )}

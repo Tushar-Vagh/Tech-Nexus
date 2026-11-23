@@ -101,8 +101,7 @@ export default async function PostPage({ params }: Props) {
           <div className="prose max-w-none" dangerouslySetInnerHTML={{ __html: firstHalf }} />
 
           {/* 3. Mid-Article In-Content Ad */}
-          <div className="my-8 py-3 border-y border-border/40">
-            <span className="text-[10px] uppercase font-semibold text-secondary tracking-wider block mb-2 text-center">Sponsored</span>
+          <div className="my-8 py-2">
             <AdSlot format="300x250" slot="article-middle" />
           </div>
 
