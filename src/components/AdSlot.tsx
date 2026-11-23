@@ -73,13 +73,11 @@ export default function AdSlot({
     container.innerHTML = '' // clear previous ad
 
     if (format === 'native') {
-      // Native Banner script - extract hash if full URL or extract id directly
       let scriptSrc = activeKey
       let containerHash = activeKey
 
       if (activeKey.startsWith('http://') || activeKey.startsWith('https://')) {
         scriptSrc = activeKey
-        // Extract hash from end of URL (e.g. https://bicea.org/21/e888ecce86a9f815f6b4a6a51e8b8c3b)
         const parts = activeKey.split('/')
         containerHash = parts[parts.length - 1]
       } else {
@@ -98,26 +96,43 @@ export default function AdSlot({
       return
     }
 
-    // Standard Iframe Banners
-    const confScript = document.createElement('script')
-    confScript.type = 'text/javascript'
-    confScript.innerHTML = `
-      atOptions = {
-        'key' : '${activeKey}',
-        'format' : 'iframe',
-        'height' : ${height},
-        'width' : ${width},
-        'params' : {}
-      };
-    `
+    // Isolate Adsterra standard banner inside an iframe so multiple banners don't overwrite each other's atOptions global
+    const iframe = document.createElement('iframe')
+    iframe.width = `${width}`
+    iframe.height = `${height}`
+    iframe.style.border = 'none'
+    iframe.style.overflow = 'hidden'
+    iframe.scrolling = 'no'
 
-    const invokeScript = document.createElement('script')
-    invokeScript.type = 'text/javascript'
-    invokeScript.src = `//www.topcreativeformat.com/${activeKey}/invoke.js`
-    invokeScript.async = true
+    container.appendChild(iframe)
 
-    container.appendChild(confScript)
-    container.appendChild(invokeScript)
+    const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document
+    if (iframeDoc) {
+      iframeDoc.open()
+      iframeDoc.write(`
+        <!DOCTYPE html>
+        <html>
+          <head>
+            <style>
+              body { margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; background: transparent; }
+            </style>
+          </head>
+          <body>
+            <script type="text/javascript">
+              var atOptions = {
+                'key' : '${activeKey}',
+                'format' : 'iframe',
+                'height' : ${height},
+                'width' : ${width},
+                'params' : {}
+              };
+            </script>
+            <script type="text/javascript" src="//www.topcreativeformat.com/${activeKey}/invoke.js"></script>
+          </body>
+        </html>
+      `)
+      iframeDoc.close()
+    }
   }, [activeKey, height, width, format])
 
   if (!activeKey) {
