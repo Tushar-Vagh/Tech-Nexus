@@ -4,9 +4,8 @@ import { formatDate, readingTime } from '@/lib/utils'
 import AdSlot from '@/components/AdSlot'
 import Sidebar from '@/components/Sidebar'
 import ShareButtons from '@/components/ShareButtons'
+import ViewTracker from '@/components/ViewTracker'
 import type { Metadata } from 'next'
-
-export const dynamic = 'force-dynamic'
 
 type Props = { params: Promise<{ slug: string }> }
 
@@ -32,9 +31,6 @@ export default async function PostPage({ params }: Props) {
     post = await prisma.post.findUnique({
       where: { slug },
     })
-    if (post) {
-      await prisma.post.update({ where: { id: post.id }, data: { views: { increment: 1 } } })
-    }
   } catch (e) {}
 
   if (!post) notFound()
@@ -43,6 +39,9 @@ export default async function PostPage({ params }: Props) {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      {/* Realtime visitor tracker */}
+      <ViewTracker slug={post.slug} />
+
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <article className="lg:col-span-2">
           {/* Header */}
@@ -55,7 +54,7 @@ export default async function PostPage({ params }: Props) {
               <span className="text-secondary text-sm">·</span>
               <span className="text-secondary text-sm">{readingTime(post.content)}</span>
               <span className="text-secondary text-sm">·</span>
-              <span className="text-secondary text-sm">{post.views} views</span>
+              <span className="text-secondary text-sm">{post.views || 0} views</span>
             </div>
             <h1 className="text-3xl md:text-4xl font-extrabold text-foreground mb-4">{post.title}</h1>
             <p className="text-lg text-secondary mb-6">{post.excerpt}</p>
