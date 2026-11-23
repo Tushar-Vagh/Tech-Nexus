@@ -37,7 +37,6 @@ export default async function PostPage({ params }: Props) {
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
 
-  // Split HTML content at second closing tag to insert an authentic in-article mid ad
   const content = post.content || ''
   let firstHalf = content
   let secondHalf = ''
@@ -52,7 +51,7 @@ export default async function PostPage({ params }: Props) {
       {/* Realtime visitor tracker */}
       <ViewTracker slug={post.slug} />
 
-      {/* 1. Header Banner Ad (Above Article) */}
+      {/* 1. Top Header Banner (728x90) */}
       <div className="mb-6">
         <AdSlot format="728x90" slot="article-header" />
       </div>
@@ -92,15 +91,15 @@ export default async function PostPage({ params }: Props) {
             <img src={post.coverImage} alt={post.title} className="w-full rounded-xl mb-6 max-h-96 object-cover" />
           )}
 
-          {/* 2. Top-Of-Content Ad */}
+          {/* 2. Before Content Banner (468x60 / 728x90) */}
           <div className="my-6">
-            <AdSlot format="728x90" slot="article-before-content" />
+            <AdSlot format="468x60" slot="article-before-content" />
           </div>
 
           {/* Content First Half */}
           <div className="prose max-w-none" dangerouslySetInnerHTML={{ __html: firstHalf }} />
 
-          {/* 3. Mid-Article In-Content Ad */}
+          {/* 3. Mid-Article In-Content Ad (300x250) */}
           <div className="my-8 py-2">
             <AdSlot format="300x250" slot="article-middle" />
           </div>
@@ -110,7 +109,12 @@ export default async function PostPage({ params }: Props) {
             <div className="prose max-w-none" dangerouslySetInnerHTML={{ __html: secondHalf }} />
           )}
 
-          {/* 4. Bottom-Of-Article Ad */}
+          {/* 4. Native Banner Unit (High CTR) */}
+          <div className="my-8">
+            <AdSlot format="native" slot="article-native" />
+          </div>
+
+          {/* 5. End of Article Banner (728x90) */}
           <div className="my-8">
             <AdSlot format="728x90" slot="article-end" />
           </div>
@@ -121,13 +125,13 @@ export default async function PostPage({ params }: Props) {
             <ShareButtons url={`${siteUrl}/blog/${post.slug}`} title={post.title} />
           </div>
 
-          {/* 5. Post Comments/After-Article Ad */}
-          <div className="mt-8">
-            <AdSlot format="728x90" slot="article-after-share" />
+          {/* 6. Mobile Banner / Sticky Unit (320x50) */}
+          <div className="mt-8 flex justify-center">
+            <AdSlot format="320x50" slot="article-mobile-bottom" />
           </div>
         </article>
 
-        {/* Sidebar includes 2 additional Ad slots (Top 300x250 + Bottom 300x250) */}
+        {/* Sidebar includes 160x600 skyscraper + 300x250 rectangle + 160x300 */}
         <Sidebar />
       </div>
     </div>

@@ -4,7 +4,18 @@ import { useEffect, useRef } from 'react'
 
 interface AdSlotProps {
   slot?: string
-  format?: '728x90' | '300x250' | '468x60' | '160x600' | 'auto' | 'horizontal' | 'rectangle' | 'vertical'
+  format?:
+    | '728x90'
+    | '300x250'
+    | '468x60'
+    | '160x600'
+    | '160x300'
+    | '320x50'
+    | 'native'
+    | 'auto'
+    | 'horizontal'
+    | 'rectangle'
+    | 'vertical'
   adsterraKey?: string
   className?: string
 }
@@ -17,9 +28,9 @@ export default function AdSlot({
 }: AdSlotProps) {
   const containerRef = useRef<HTMLDivElement>(null)
 
-  // Map format strings to width/height
   let width = 728
   let height = 90
+
   if (format === '300x250' || format === 'rectangle') {
     width = 300
     height = 250
@@ -29,21 +40,52 @@ export default function AdSlot({
   } else if (format === '160x600' || format === 'vertical') {
     width = 160
     height = 600
+  } else if (format === '160x300') {
+    width = 160
+    height = 300
+  } else if (format === '320x50') {
+    width = 320
+    height = 50
   }
 
-  // Get key from props or environment variables
-  const envKey =
-    width === 300
-      ? process.env.NEXT_PUBLIC_ADSTERRA_300x250_KEY
-      : process.env.NEXT_PUBLIC_ADSTERRA_728x90_KEY
+  // Pick corresponding environment key if not passed directly
+  let envKey = process.env.NEXT_PUBLIC_ADSTERRA_728x90_KEY
+  if (format === '300x250' || format === 'rectangle') {
+    envKey = process.env.NEXT_PUBLIC_ADSTERRA_300x250_KEY
+  } else if (format === '468x60') {
+    envKey = process.env.NEXT_PUBLIC_ADSTERRA_468x60_KEY
+  } else if (format === '160x600' || format === 'vertical') {
+    envKey = process.env.NEXT_PUBLIC_ADSTERRA_160x600_KEY
+  } else if (format === '160x300') {
+    envKey = process.env.NEXT_PUBLIC_ADSTERRA_160x300_KEY
+  } else if (format === '320x50') {
+    envKey = process.env.NEXT_PUBLIC_ADSTERRA_320x50_KEY
+  } else if (format === 'native') {
+    envKey = process.env.NEXT_PUBLIC_ADSTERRA_NATIVE_KEY
+  }
+
   const activeKey = adsterraKey || envKey
 
   useEffect(() => {
     if (!activeKey || !containerRef.current) return
 
     const container = containerRef.current
-    container.innerHTML = '' // clear any previous ad
+    container.innerHTML = '' // clear previous ad
 
+    if (format === 'native') {
+      // Native Banner script
+      const nativeScript = document.createElement('script')
+      nativeScript.async = true
+      nativeScript.dataset.cfasync = 'false'
+      nativeScript.src = `//www.topcreativeformat.com/${activeKey}/invoke.js`
+      const nativeDiv = document.createElement('div')
+      nativeDiv.id = `container-${activeKey}`
+      container.appendChild(nativeDiv)
+      container.appendChild(nativeScript)
+      return
+    }
+
+    // Standard Iframe Banners
     const confScript = document.createElement('script')
     confScript.type = 'text/javascript'
     confScript.innerHTML = `
@@ -63,9 +105,8 @@ export default function AdSlot({
 
     container.appendChild(confScript)
     container.appendChild(invokeScript)
-  }, [activeKey, height, width])
+  }, [activeKey, height, width, format])
 
-  // If no Ad key is configured, return null (render nothing, taking 0 space)
   if (!activeKey) {
     return null
   }
