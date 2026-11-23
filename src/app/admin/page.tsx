@@ -7,7 +7,7 @@ import Link from 'next/link'
 export default function AdminDashboard() {
   const { data: session, status } = useSession()
   const router = useRouter()
-  const [stats, setStats] = useState({ total: 0, published: 0, drafts: 0 })
+  const [stats, setStats] = useState({ total: 0, published: 0, drafts: 0, totalViews: 0 })
   const [posts, setPosts] = useState<any[]>([])
 
   useEffect(() => {
@@ -19,12 +19,14 @@ export default function AdminDashboard() {
       fetch('/api/posts')
         .then(r => r.json())
         .then(data => {
-          setPosts(data.posts || [])
           const all = data.posts || []
+          setPosts(all)
+          const viewsSum = all.reduce((acc: number, p: any) => acc + (p.views || 0), 0)
           setStats({
             total: all.length,
             published: all.filter((p: any) => p.published).length,
             drafts: all.filter((p: any) => !p.published).length,
+            totalViews: viewsSum,
           })
         })
         .catch(() => {})
@@ -46,8 +48,8 @@ export default function AdminDashboard() {
         </Link>
       </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
         <div className="bg-card border border-border rounded-xl p-6">
           <p className="text-secondary text-sm">Total Posts</p>
           <p className="text-3xl font-bold text-foreground mt-1">{stats.total}</p>
@@ -59,6 +61,10 @@ export default function AdminDashboard() {
         <div className="bg-card border border-border rounded-xl p-6">
           <p className="text-secondary text-sm">Drafts</p>
           <p className="text-3xl font-bold text-accent mt-1">{stats.drafts}</p>
+        </div>
+        <div className="bg-card border border-border rounded-xl p-6">
+          <p className="text-secondary text-sm">Total Views</p>
+          <p className="text-3xl font-bold text-blue-500 mt-1">👁️ {stats.totalViews.toLocaleString()}</p>
         </div>
       </div>
 
@@ -72,15 +78,20 @@ export default function AdminDashboard() {
           <div className="divide-y divide-border">
             {posts.slice(0, 10).map(post => (
               <div key={post.id} className="p-5 flex items-center justify-between hover:bg-card-hover transition-colors">
-                <div>
+                <div className="pr-4">
                   <p className="font-medium text-foreground">{post.title}</p>
-                  <p className="text-sm text-secondary mt-1">{post.category?.name || 'Uncategorized'} · {new Date(post.createdAt).toLocaleDateString()}</p>
+                  <p className="text-sm text-secondary mt-1">
+                    {post.category?.name || 'Uncategorized'} · {new Date(post.createdAt).toLocaleDateString()}
+                  </p>
                 </div>
-                <div className="flex items-center space-x-3">
-                  <span className={`text-xs px-2 py-1 rounded-full ${post.published ? 'bg-green-500/10 text-green-500' : 'bg-accent/10 text-accent'}`}>
+                <div className="flex items-center space-x-4">
+                  <span className="text-xs bg-muted text-secondary px-2.5 py-1 rounded-full font-medium">
+                    👁️ {(post.views || 0).toLocaleString()} views
+                  </span>
+                  <span className={`text-xs px-2.5 py-1 rounded-full ${post.published ? 'bg-green-500/10 text-green-500' : 'bg-accent/10 text-accent'}`}>
                     {post.published ? 'Published' : 'Draft'}
                   </span>
-                  <Link href={`/admin/posts/${post.id}`} className="text-primary text-sm hover:underline">Edit</Link>
+                  <Link href={`/admin/posts/${post.id}`} className="text-primary text-sm hover:underline font-medium">Edit</Link>
                 </div>
               </div>
             ))}

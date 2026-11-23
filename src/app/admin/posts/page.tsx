@@ -39,7 +39,10 @@ export default function ManagePosts() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
       <div className="flex items-center justify-between mb-8">
-        <h1 className="text-3xl font-bold text-foreground">Manage Posts</h1>
+        <div>
+          <h1 className="text-3xl font-bold text-foreground">Manage Posts</h1>
+          <p className="text-secondary text-sm mt-1">Review article engagement, views, and publication status</p>
+        </div>
         <Link href="/admin/posts/new" className="bg-primary hover:bg-primary-dark text-white px-5 py-2.5 rounded-lg font-semibold transition-colors">
           + New Post
         </Link>
@@ -49,11 +52,16 @@ export default function ManagePosts() {
           <div className="divide-y divide-border">
             {posts.map(post => (
               <div key={post.id} className="p-5 flex items-center justify-between hover:bg-card-hover transition-colors">
-                <div className="flex-1">
+                <div className="flex-1 pr-4">
                   <p className="font-medium text-foreground">{post.title}</p>
-                  <p className="text-sm text-secondary mt-1">{post.category?.name} · {new Date(post.createdAt).toLocaleDateString()} · {post.views} views</p>
+                  <p className="text-sm text-secondary mt-1">
+                    {post.category?.name || 'Uncategorized'} · {new Date(post.createdAt).toLocaleDateString()}
+                  </p>
                 </div>
                 <div className="flex items-center space-x-3">
+                  <span className="text-xs bg-muted text-secondary px-3 py-1.5 rounded-full font-semibold">
+                    👁️ {(post.views || 0).toLocaleString()} views
+                  </span>
                   <button onClick={() => togglePublish(post.id, post.published)}
                     className={`text-xs px-3 py-1.5 rounded-full font-medium transition-colors ${post.published ? 'bg-green-500/10 text-green-500 hover:bg-green-500/20' : 'bg-accent/10 text-accent hover:bg-accent/20'}`}>
                     {post.published ? 'Published' : 'Draft'}
